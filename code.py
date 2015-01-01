@@ -11,6 +11,7 @@
     GNU General Public License for more details.
 """
 import web
+import sha
 from os import environ
 
 
@@ -55,8 +56,12 @@ class index:
 class watch_video:
 	def GET(self):
 		input = web.input(id=None)
-		#Sanitize input here and get data about the video
-		return render.video(str(input.id))
+		#TODO: Sanitize input
+		query = db.select('videos', {'vid': int(input.id, 36)}, where='id=$vid')
+		if not query: #Check if it's empty
+			return render.video(None)
+		else:
+			return render.video(query[0]
 
 class upload_video:
 	def GET(self):
@@ -65,7 +70,8 @@ class upload_video:
 		x = web.input(videoFile={}) #x is out input basket
 		filedir = "videos"
 		if 'videoFile' in x:
-			q = db.insert('videos', title=x.videoName, password=x.videoPassword, description=x.videoDescription, views=0, likes=0, dislikes=0)
+			pass = sha.new(x.videoPassword)
+			q = db.insert('videos', title=x.videoName, password=pass.hexdigest(), description=x.videoDescription, views=0, likes=0, dislikes=0)
 			"""
 			NOTICE
 			THE PASSWORD WILL BE ENCRYPTED, THIS IS TEMPORAL
