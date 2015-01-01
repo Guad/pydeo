@@ -20,7 +20,7 @@ render = web.template.render('templates/')
 database_url = environ['DATABASE_URL']
 database_user = environ['DATABASE_USER']
 database_pass = environ['DATABASE_PASSWORD']
-database_name = 'freetube'
+database_name = environ['DATABASE_NAME']
 database_method = 'postgres'
 
 db = web.database(dburl=database_url, dbn=database_method, user=database_user, pw=database_pass, db=database_name)
@@ -65,7 +65,7 @@ class upload_video:
 		x = web.input(videoFile={}) #x is out input basket
 		filedir = "videos"
 		if 'videoFile' in x:
-			q = db.insert('videos', name=x.videoName, date=SQLLiteral('NOW()'), password=x.videoPassword, description=x.videoDescription)
+			q = db.insert('videos', title=x.videoName, date=SQLLiteral('NOW()'), password=x.videoPassword, description=x.videoDescription, views=0, likes=0, dislikes=0)
 			"""
 			NOTICE
 			THE PASSWORD WILL BE ENCRYPTED, THIS IS TEMPORAL
