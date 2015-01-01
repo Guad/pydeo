@@ -15,7 +15,7 @@ from os import environ
 
 
 render = web.template.render('templates/')
-
+"""
 #DATABASE SETUP
 database_url = environ['DATABASE_URL']
 database_user = environ['DATABASE_USER']
@@ -25,32 +25,59 @@ database_method = 'postgres'
 
 db = web.database(dburl=database_url, dbn=database_method, user=database_user, pw=database_pass, db=database_name)
 ###############
-
+"""
 
 urls = ( 
 	'/', 'index',
 	'/v', 'watch_video',
 	'/upload', 'upload_video',
 )
+def base36encode(number, alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
+    """Converts an integer to a base36 string.
+       We will be using this for our video ID."""
+    if not isinstance(number, (int, long)):
+        raise TypeError('number must be an integer')
+    base36 = ''
+    sign = ''
+    if number < 0:
+        sign = '-'
+        number = -number
+    if 0 <= number < len(alphabet):
+        return sign + alphabet[number]
+    while number != 0:
+        number, i = divmod(number, len(alphabet))
+        base36 = alphabet[i] + base36
+    return sign + base36
 
 class index:
 	def GET(self):
-		#return render.index()
-		return "index goes here"
+		return render.index()
 
 class watch_video:
 	def GET(self):
 		input = web.input(id=None)
-
-		return "video '" + input.id + "' goes here"
-		#TODO
+		#Sanitize input here and get data about the video
+		return render.video(str(input.id))
 
 class upload_video:
 	def GET(self):
-		return "uploader goes here"
-		#TODO
+		return render.upload()
 	def POST(self):
-		pass
+		x = web.input(videoFile={}) #x is out input basket
+		filedir = "videos"
+		if 'videoFile' in x:
+			q = db.insert('videos', name=x.videoName, date=SQLLiteral('NOW()'), password=x.videoPassword, description=x.videoDescription)
+			"""
+			NOTICE
+			THE PASSWORD WILL BE ENCRYPTED, THIS IS TEMPORAL
+
+			q RETURNS THE ID
+			"""
+			videoOut = open(filedir +'/'+ base36encode(int(q)) + '.mp4','wb')
+			videoOut.write(x.videoFile.file.read())
+			videoOut.close() #upload complete
+        	raise web.seeother('/v?id=' + base36encode(int(q)))
+
 		#Video processing happens here.
 
 

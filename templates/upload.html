@@ -1,0 +1,42 @@
+$def with ()
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>FreeTube - Upload</title>
+		<link rel="stylesheet" type="text/css" href="../static/skeleton.css">
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="eight columns">
+					<h3>Upload to FreeTube</h3><br>
+				</div>
+				<div class="four columns">
+					<a class="button u-pull-right" href="/">Home</a>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="ten columns">
+					<p>Choose your video, a name and a password to delete the video when you regret it.</p>
+				</div>
+			</div>
+
+			<form method="POST" enctype="multipart/form-data">
+				<div class="row">
+    				<div class="six columns">
+      					<label for="videoName">Video Name</label>
+      					<input class="u-full-width" placeholder="My Video" id="videoName" type="text" name="videoName" required>
+    				</div>
+    				<div class="six columns">
+      					<label for="videoPassword">Video Password</label>
+      					<input class="u-full-width" id="videoPassword" type="password" name="videoPassword" placeholder="'password' is not a good password" required>
+    				</div>
+  				</div>
+  				<label for="videoDescription">Description</label>
+  				<textarea class="u-full-width" placeholder="Description goes here" id="videoDescription" name="videoDescription"></textarea>
+  				<input type="file" name="videoFile" accept="video/mp4" required>
+  				<input class="button-primary u-pull-right" value="Submit" type="submit">
+			</form>
+		</div>
+	</body>
+</html>
