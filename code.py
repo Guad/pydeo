@@ -65,7 +65,7 @@ class upload_video:
 		x = web.input(videoFile={}) #x is out input basket
 		filedir = "videos"
 		if 'videoFile' in x:
-			q = db.insert('videos', title=x.videoName, date=SQLLiteral('NOW()'), password=x.videoPassword, description=x.videoDescription, views=0, likes=0, dislikes=0)
+			q = db.insert('videos', title=x.videoName, password=x.videoPassword, description=x.videoDescription, views=0, likes=0, dislikes=0)
 			"""
 			NOTICE
 			THE PASSWORD WILL BE ENCRYPTED, THIS IS TEMPORAL
