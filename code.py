@@ -12,19 +12,25 @@
 """
 import web
 import sha
+import psycopg2 
 from os import environ
 
 
 render = web.template.render('templates/')
 
 #DATABASE SETUP
+"""
 database_url = environ['DATABASE_URL']
 database_user = environ['DATABASE_USER']
 database_pass = environ['DATABASE_PASSWORD']
 database_name = environ['DATABASE_NAME']
 database_method = 'postgres'
+db = web.database(dburl=database_url, dbn=database_method, db=database_name)
+"""
+import urlparse
 
-db = web.database(dburl=database_url, dbn=database_method, user=database_user, pw=database_pass, db=database_name)
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
 ###############
 
 urls = ( 
@@ -57,11 +63,21 @@ class watch_video:
 	def GET(self):
 		input = web.input(id=None)
 		#TODO: Sanitize input
-		query = db.select('videos', {'vid': int(input.id, 36)}, where='id=$vid')
+		conn = psycopg2.connect(
+    		database=url.path[1:],
+    		user=url.username,
+    		password=url.password,
+    		host=url.hostname,
+    		port=url.port
+		)
+		cur = conn.cursor()
+		cur.execute('SELECT * FROM videos WHERE id=%i', int(input.id, 36))
+		query = cur.fetchone()
+		#query = db.select('videos', {'vid': int(input.id, 36)}, where='id=$vid')
 		if not query: #Check if it's empty
 			return render.video(None)
 		else:
-			return render.video(query[0]
+			return render.video(query[0])
 
 class upload_video:
 	def GET(self):
@@ -70,15 +86,25 @@ class upload_video:
 		x = web.input(videoFile={}) #x is out input basket
 		filedir = "videos"
 		if 'videoFile' in x:
-			pass = sha.new(x.videoPassword)
-			q = db.insert('videos', title=x.videoName, password=pass.hexdigest(), description=x.videoDescription, views=0, likes=0, dislikes=0)
-			"""
-			q RETURNS THE ID
-			"""
-			videoOut = open(filedir +'/'+ base36encode(int(q)) + '.mp4','wb')
+			conn = psycopg2.connect(
+    			database=url.path[1:],
+    			user=url.username,
+    			password=url.password,
+    			host=url.hostname,
+    			port=url.port
+			)
+			cur = conn.cursor()
+			passw = sha.new(x.videoPassword)
+			#q = db.insert('videos', title=x.videoName, password=passw.hexdigest(), description=x.videoDescription, views=0, likes=0, dislikes=0)
+			cur.execute('INSERT INTO videos (title, password, description, views, likes, dislikes) VALUES (%s, %s, %s, %i, %i, %i)', (x.videoName, passw.hexdigest(), x.videoDescription, 0, 0, 0))
+			qID = cur.fetchone()[0]
+			conn.commit()
+			cur.close()
+			conn.close()
+			videoOut = open(filedir +'/'+ base36encode(int(qID)) + '.mp4','wb')
 			videoOut.write(x.videoFile.file.read())
 			videoOut.close() #upload complete
-        	raise web.seeother('/v?id=' + base36encode(int(q)))
+        	raise web.seeother('/v?id=' + base36encode(int(qID)))
 
 		#Video processing happens here.
 
