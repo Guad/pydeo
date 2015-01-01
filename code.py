@@ -73,9 +73,6 @@ class upload_video:
 			pass = sha.new(x.videoPassword)
 			q = db.insert('videos', title=x.videoName, password=pass.hexdigest(), description=x.videoDescription, views=0, likes=0, dislikes=0)
 			"""
-			NOTICE
-			THE PASSWORD WILL BE ENCRYPTED, THIS IS TEMPORAL
-
 			q RETURNS THE ID
 			"""
 			videoOut = open(filedir +'/'+ base36encode(int(q)) + '.mp4','wb')
