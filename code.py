@@ -15,7 +15,7 @@ from os import environ
 
 
 render = web.template.render('templates/')
-"""
+
 #DATABASE SETUP
 database_url = environ['DATABASE_URL']
 database_user = environ['DATABASE_USER']
@@ -25,7 +25,6 @@ database_method = 'postgres'
 
 db = web.database(dburl=database_url, dbn=database_method, user=database_user, pw=database_pass, db=database_name)
 ###############
-"""
 
 urls = ( 
 	'/', 'index',
