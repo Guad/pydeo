@@ -1,4 +1,4 @@
-""" Copyright (C) 2015 Phil P. Ch.
+""" Copyright (C) 2015 Guad
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ urls = (
 
 class index:
 	def GET(self):
-		return render.index()
+		#return render.index()
+		return "index goes here"
 
 class watch_video:
 	def GET(self):
