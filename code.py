@@ -20,8 +20,10 @@ render = web.template.render('templates/')
 database_url = environ['DATABASE_URL']
 database_user = environ['DATABASE_USER']
 database_pass = environ['DATABASE_PASSWORD']
+database_name = 'freetube'
+database_method = 'postgres'
 
-db = web.database(dburl=database_url, dbn='postgres', user=database_user, pw=database_pass, db='freetube')
+db = web.database(dburl=database_url, dbn=database_method, user=database_user, pw=database_pass, db=database_name)
 ###############
 
 
