@@ -11,8 +11,19 @@
     GNU General Public License for more details.
 """
 import web
+from os import environ
+
 
 render = web.template.render('templates/')
+
+#DATABASE SETUP
+database_url = environ['DATABASE_URL']
+database_user = environ['DATABASE_USER']
+database_pass = environ['DATABASE_PASSWORD']
+
+db = web.database(dburl=database_url, dbn='postgres', user=database_user, pw=database_pass, db='freetube')
+###############
+
 
 urls = ( 
 	'/', 'index',
@@ -27,7 +38,9 @@ class index:
 
 class watch_video:
 	def GET(self):
-		return "video goes here"
+		input = web.input(id=None)
+
+		return "video '" + input.id + "' goes here"
 		#TODO
 
 class upload_video:
