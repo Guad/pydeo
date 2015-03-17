@@ -1,6 +1,2 @@
-<<<<<<< HEAD
-web.py==0.37
 Flask>=0.10.1
 Flask-SQLAlchemy>=2.0
-psycopg2>=2.5.3
->>>>>>> 60a764f841d89c66cfa73f4e35b8d7ab6f0ae400
