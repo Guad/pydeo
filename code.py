@@ -72,15 +72,17 @@ def index():
 
 @app.route('/v/<videoid>')
 def viewVideo():
-	video = db.query.filter_by(id=videoid).first()
+	video = db.query.filter_by(id=videoid).first_or_404()
+	path = base36encode(video.id)
 	vdata = {
 			'title':video.title,
 			'desc':video.description,
-			'id':videoid,
+			'path':path,
 			'author':video.author,
 			'date':video.date
 	}
 	return flask.render_template('video.html', video=vdata)
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def uploadVideo():

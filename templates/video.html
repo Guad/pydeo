@@ -1,14 +1,14 @@
 <!DOCTYPE html> <!-- video is a dictionary that has the video filename, name, id, description, views and likes -->
 <html>
 	<head>
-		<title>{{video.name}} - Freetube</title>
+		<title>{{video.title}} - Freetube</title>
 		<link rel="stylesheet" type="text/css" href="http://a.pomf.se/rdktqe.css">
 	</head>
 	<body>
 		<div class="container">
 			<div class="row">
 				<div class="eight columns">
-					<h3>{{video.name}} - FreeTube</h3><br>
+					<h3>{{video.title}} - FreeTube</h3><br>
 				</div>
 				<div class="four columns">
 					<a class="button u-pull-right" href="/">Home</a>
@@ -17,13 +17,13 @@
 			<div class="row">
 				<div class="eight columns">
 					<video controls autoplay>
-						<source src="../static/videos/$vID.mp4" type="video/mp4">
+						<source src="../static/videos/{{video.path}}.mp4" type="video/mp4">
 					</video>
 				</div>
 				<div class="four columns">
-					<h4>{{video.name}}</h4>
-					<p>
-					{{video.description}}</p>
+					<h4 style="padding: 0; margin: 0;">{{video.title}}</h4>
+					<p style="color:grey; font-size:80%;">Uploaded by {{video.author}} on {{video.date}}</p>
+					<p>{{video.desc}}</p>
 				</div>
 			</div>
 		</div>
