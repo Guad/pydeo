@@ -10,22 +10,6 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 """
-import web
-from os import environ
-
-
-render = web.template.render('templates/')
-
-#DATABASE SETUP
-database_url = environ['DATABASE_URL']
-database_user = environ['DATABASE_USER']
-database_pass = environ['DATABASE_PASSWORD']
-database_name = environ['DATABASE_NAME']
-database_method = 'postgres'
-
-db = web.database(dburl=database_url, dbn=database_method, user=database_user, pw=database_pass, db=database_name)
-###############
-=======
 import flask
 import sha
 import datetime
@@ -33,70 +17,12 @@ from werkzeug import secure_filename
 from flask.ext.sqlalchemy import SQLAlchemy
 from os import environ
 
->>>>>>> 60a764f841d89c66cfa73f4e35b8d7ab6f0ae400
 
-urls = ( 
-	'/', 'index',
-	'/v', 'watch_video',
-	'/upload', 'upload_video',
-)
-def base36encode(number, alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
-    """Converts an integer to a base36 string.
-       We will be using this for our video ID."""
-    if not isinstance(number, (int, long)):
-        raise TypeError('number must be an integer')
-    base36 = ''
-    sign = ''
-    if number < 0:
-        sign = '-'
-        number = -number
-    if 0 <= number < len(alphabet):
-        return sign + alphabet[number]
-    while number != 0:
-        number, i = divmod(number, len(alphabet))
-        base36 = alphabet[i] + base36
-    return sign + base36
+app = flask.Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 800 * 1024 * 1024 #Set the upload limit to 800MiB
 
-class index:
-	def GET(self):
-		return render.index()
-
-class watch_video:
-	def GET(self):
-		input = web.input(id=None)
-		#Sanitize input here and get data about the video
-		return render.video(str(input.id))
-
-class upload_video:
-	def GET(self):
-		return render.upload()
-	def POST(self):
-		x = web.input(videoFile={}) #x is out input basket
-		filedir = "videos"
-		if 'videoFile' in x:
-			q = db.insert('videos', title=x.videoName, password=x.videoPassword, description=x.videoDescription, views=0, likes=0, dislikes=0)
-			"""
-			NOTICE
-			THE PASSWORD WILL BE ENCRYPTED, THIS IS TEMPORAL
-
-			q RETURNS THE ID
-			"""
-			videoOut = open(filedir +'/'+ base36encode(int(q)) + '.mp4','wb')
-			videoOut.write(x.videoFile.file.read())
-			videoOut.close() #upload complete
-        	raise web.seeother('/v?id=' + base36encode(int(q)))
-
-		#Video processing happens here.
-
-
-if __name__ == "__main__":
-	app.run()	app.run()
-=======
 
 ######################DATABASE SETUP###############################
-#database_user = environ['DATABASE_USER']
-#database_pass = environ['DATABASE_PASSWORD']
-#database_name = environ['DATABASE_NAME']
 app.config['SQLALCHEMY_DATABASE_URI'] = environ['DATABASE_URL']
 db = SQLAlchemy(app)
 
@@ -143,15 +69,17 @@ def index():
 
 @app.route('/v/<videoid>')
 def viewVideo():
-	video = db.query.filter_by(id=videoid).first()
+	video = db.query.filter_by(id=videoid).first_or_404()
+	path = base36encode(video.id)
 	vdata = {
 			'title':video.title,
 			'desc':video.description,
-			'id':videoid,
+			'path':path,
 			'author':video.author,
 			'date':video.date
 	}
 	return flask.render_template('video.html', video=vdata)
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def uploadVideo():
@@ -173,4 +101,3 @@ def uploadVideo():
 		videoOut.write(videoFile)
 		videoOut.close() #upload complete
 		return flask.redirect(flask.url_for('index', videoid=vidHash))
->>>>>>> 60a764f841d89c66cfa73f4e35b8d7ab6f0ae400
