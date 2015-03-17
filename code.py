@@ -10,6 +10,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 """
+import flask 
+from werkzeug import secure_filename
+
 #DATABASE SETUP
 """
 database_url = environ['DATABASE_URL']
@@ -20,3 +23,21 @@ database_method = 'postgres'
 db = web.database(dburl=database_url, dbn=database_method, db=database_name)
 """
 ###############
+
+app = flask.Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 800 * 1024 * 1024 #Set the upload limit to 800MiB
+
+@app.route('/')
+def index():
+	return flask.render_template('index.html')
+
+@app.route('/v/<videoid>')
+def viewVideo():
+	return flask.render_template('video.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+def uploadVideo():
+	if flask.request.method == 'GET':
+		return flask.render_template('upload.html')
+	else: #POST request
+		return flask.render_template('upload.html')
