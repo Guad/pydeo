@@ -23,9 +23,6 @@ app.config['MAX_CONTENT_LENGTH'] = 800 * 1024 * 1024 #Set the upload limit to 80
 
 
 ######################DATABASE SETUP###############################
-#database_user = environ['DATABASE_USER']
-#database_pass = environ['DATABASE_PASSWORD']
-#database_name = environ['DATABASE_NAME']
 app.config['SQLALCHEMY_DATABASE_URI'] = environ['DATABASE_URL']
 db = SQLAlchemy(app)
 
