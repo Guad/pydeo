@@ -21,7 +21,6 @@ from os import environ
 app = flask.Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 800 * 1024 * 1024 #Set the upload limit to 800MiB
 
-
 ######################DATABASE SETUP###############################
 app.config['SQLALCHEMY_DATABASE_URI'] = environ['DATABASE_URL']
 db = SQLAlchemy(app)
