@@ -10,22 +10,61 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 """
-import flask 
+import flask
+import sha
+import datetime
 from werkzeug import secure_filename
+from flask.ext.sqlalchemy import SQLAlchemy
+from os import environ
 
-#DATABASE SETUP
-"""
-database_url = environ['DATABASE_URL']
-database_user = environ['DATABASE_USER']
-database_pass = environ['DATABASE_PASSWORD']
-database_name = environ['DATABASE_NAME']
-database_method = 'postgres'
-db = web.database(dburl=database_url, dbn=database_method, db=database_name)
-"""
-###############
 
 app = flask.Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 800 * 1024 * 1024 #Set the upload limit to 800MiB
+
+
+######################DATABASE SETUP###############################
+#database_user = environ['DATABASE_USER']
+#database_pass = environ['DATABASE_PASSWORD']
+#database_name = environ['DATABASE_NAME']
+app.config['SQLALCHEMY_DATABASE_URI'] = environ['DATABASE_URL']
+db = SQLAlchemy(app)
+
+class Video(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(100))
+	description = db.Column(db.Text)
+	author = db.Column(db.string, 48)
+	password = db.Column(db.Text)
+	date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
+	def __init__(self, title, description, author, password):
+		self.title = title
+		self.description = description
+		self.author = author
+		self.password = password
+
+	def __repr__(self):
+		return '<Video %s>' % self.path
+########################DB SETUP END###############################
+
+
+def base36encode(number, alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
+    """Converts an integer to a base36 string.
+       We will be using this for our video ID."""
+    if not isinstance(number, (int, long)):
+        raise TypeError('number must be an integer')
+    base36 = ''
+    sign = ''
+    if number < 0:
+        sign = '-'
+        number = -number
+    if 0 <= number < len(alphabet):
+        return sign + alphabet[number]
+    while number != 0:
+        number, i = divmod(number, len(alphabet))
+        base36 = alphabet[i] + base36
+    return sign + base36
+
 
 @app.route('/')
 def index():
@@ -33,11 +72,33 @@ def index():
 
 @app.route('/v/<videoid>')
 def viewVideo():
-	return flask.render_template('video.html')
+	video = db.query.filter_by(id=videoid).first()
+	vdata = {
+			'title':video.title,
+			'desc':video.description,
+			'id':videoid,
+			'author':video.author,
+			'date':video.date
+	}
+	return flask.render_template('video.html', video=vdata)
 
 @app.route('/upload', methods=['GET', 'POST'])
 def uploadVideo():
 	if flask.request.method == 'GET':
 		return flask.render_template('upload.html')
 	else: #POST request
-		return flask.render_template('upload.html')
+		videoName = flask.request.form.get('videoName')
+		videoPassword = flask.request.form.get('videoPassword')
+		videoDesc = flask.request.form.get('videoDescription')
+		videoFile = flask.request.files['videoFile']
+		passw = sha.new(videoPassword)
+
+		video = Video(videoName, videoDescription, 'Anonymous', passw)
+		db.session.add(video)
+		db.session.commit()
+		vidHash = base36encode(int(video.id))
+
+		videoOut = open('static/videos/%s.mp4' % vidHash,'wb')
+		videoOut.write(videoFile)
+		videoOut.close() #upload complete
+		return flask.redirect(flask.url_for('index', videoid=vidHash))
