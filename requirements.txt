@@ -1,2 +1,2 @@
-Flask>=0.10.1
-psycopg2>=2.5.3
+web.py==0.37
+psycopg2==2.5.3

@@ -1,14 +1,15 @@
-<!DOCTYPE html> <!-- video is a dictionary that has the video filename, name, id, description, views and likes -->
+$def with (vID)
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>{{video.name}} - Freetube</title>
-		<link rel="stylesheet" type="text/css" href="http://a.pomf.se/rdktqe.css">
+		<title>Sample Video - Freetube</title>
+		<link rel="stylesheet" type="text/css" href="../static/skeleton.css">
 	</head>
 	<body>
 		<div class="container">
 			<div class="row">
 				<div class="eight columns">
-					<h3>{{video.name}} - FreeTube</h3><br>
+					<h3>$vID - FreeTube</h3><br>
 				</div>
 				<div class="four columns">
 					<a class="button u-pull-right" href="/">Home</a>
@@ -21,9 +22,9 @@
 					</video>
 				</div>
 				<div class="four columns">
-					<h4>{{video.name}}</h4>
+					<h4>$vID</h4>
 					<p>
-					{{video.description}}</p>
+					Description</p>
 				</div>
 			</div>
 		</div>
