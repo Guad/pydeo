@@ -2,14 +2,23 @@ $def with (vID)
 <!DOCTYPE html>
 <html>
 	<head>
+<<<<<<< HEAD
 		<title>Sample Video - Freetube</title>
 		<link rel="stylesheet" type="text/css" href="../static/skeleton.css">
+=======
+		<title>{{video.title}} - Freetube</title>
+		<link rel="stylesheet" type="text/css" href="http://a.pomf.se/rdktqe.css">
+>>>>>>> dc2e6bcbf44cc7f47e3907f3d00f17a5a749b84e
 	</head>
 	<body>
 		<div class="container">
 			<div class="row">
 				<div class="eight columns">
+<<<<<<< HEAD
 					<h3>$vID - FreeTube</h3><br>
+=======
+					<h3>{{video.title}} - FreeTube</h3><br>
+>>>>>>> dc2e6bcbf44cc7f47e3907f3d00f17a5a749b84e
 				</div>
 				<div class="four columns">
 					<a class="button u-pull-right" href="/">Home</a>
@@ -18,13 +27,19 @@ $def with (vID)
 			<div class="row">
 				<div class="eight columns">
 					<video controls autoplay>
-						<source src="../static/videos/$vID.mp4" type="video/mp4">
+						<source src="../static/videos/{{video.path}}.mp4" type="video/mp4">
 					</video>
 				</div>
 				<div class="four columns">
+<<<<<<< HEAD
 					<h4>$vID</h4>
 					<p>
 					Description</p>
+=======
+					<h4 style="padding: 0; margin: 0;">{{video.title}}</h4>
+					<p style="color:grey; font-size:80%;">Uploaded by {{video.author}} on {{video.date}}</p>
+					<p>{{video.desc}}</p>
+>>>>>>> dc2e6bcbf44cc7f47e3907f3d00f17a5a749b84e
 				</div>
 			</div>
 		</div>
